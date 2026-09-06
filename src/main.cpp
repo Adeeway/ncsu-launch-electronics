@@ -1,100 +1,69 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <Adafruit_BNO08x.h>
+#include "globals.hpp"
+#include "brains.hpp"
+#include "sensors.hpp"
 
-#define BNO08X_RESET 3
-#define BNO08X_INT   2
 
-Adafruit_BNO08x bno08x(BNO08X_RESET);
-sh2_SensorValue_t sensorValue;
 
 void setup() {
     Serial.begin(115200);
-
-    // Give the USB serial connection a moment
     delay(1000);
 
-    Serial.println("BNO085 test");
-
-    // Start I2C
     Wire.begin();
 
-    // Initialize BNO085
+    // Init BNO08x
     if (!bno08x.begin_I2C()) {
         Serial.println("Failed to find BNO085!");
-        while (1) {
-            delay(10);
-        }
+        while (1) delay(10);
     }
-
     Serial.println("BNO085 found!");
 
-    // Enable the reports we want
-    if (!bno08x.enableReport(SH2_ACCELEROMETER)) {
-        Serial.println("Could not enable accelerometer");
-    }
+    bno08x.enableReport(SH2_ACCELEROMETER);
+    bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED);
+    bno08x.enableReport(SH2_MAGNETIC_FIELD_CALIBRATED);
+    bno08x.enableReport(SH2_ROTATION_VECTOR);
 
-    if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED)) {
-        Serial.println("Could not enable gyroscope");
+    // Init DPS310
+    if (!dps.begin_I2C()) {
+        Serial.println("Failed to find DPS310!");
+        while (1) delay(10);
     }
+    Serial.println("DPS310 found!");
 
-    if (!bno08x.enableReport(SH2_MAGNETIC_FIELD_CALIBRATED)) {
-        Serial.println("Could not enable magnetometer");
-    }
+    dps.configurePressure(DPS310_64HZ, DPS310_64SAMPLES);
+    dps.configureTemperature(DPS310_64HZ, DPS310_64SAMPLES);
 
-    if (!bno08x.enableReport(SH2_ROTATION_VECTOR)) {
-        Serial.println("Could not enable rotation vector");
-    }
-
-    Serial.println("Reports enabled.");
+    Serial.println("Sensors ready.");
 }
 
+
+
+void writeSD() {
+    // TODO: write data into SD card
+    // I actually don't want this to be happening super fast, maybe a rate of
+    //  20Hz to 50Hz would be good
+    // This function will require some knowledge about buffering and flushing
+    // in SD cards, so start researching!
+}
+
+
 void loop() {
-    if (bno08x.wasReset()) {
-        Serial.println("BNO085 reset!");
+    // Available Variables:
+    // accelX/Y/Z, gyroX/Y/Z, magX/Y/Z, quatReal/I/J/K, pressure_hPa, temperature_C
+    // as well as their averaged counterparts
+
+    for (int i = 0; i < 3; i++) {
+        readBNO08x();
+        readDPS310();
+        calculateAverages();
     }
+    readBNO08x();
+    readDPS310();
+    calculateAverages();
 
-    if (bno08x.getSensorEvent(&sensorValue)) {
 
-        switch (sensorValue.sensorId) {
+    figureOutState();
+    writeSD();
 
-            case SH2_ACCELEROMETER:
-                Serial.print("ACCEL: ");
-                Serial.print(sensorValue.un.accelerometer.x);
-                Serial.print(", ");
-                Serial.print(sensorValue.un.accelerometer.y);
-                Serial.print(", ");
-                Serial.println(sensorValue.un.accelerometer.z);
-                break;
 
-            case SH2_GYROSCOPE_CALIBRATED:
-                Serial.print("GYRO: ");
-                Serial.print(sensorValue.un.gyroscope.x);
-                Serial.print(", ");
-                Serial.print(sensorValue.un.gyroscope.y);
-                Serial.print(", ");
-                Serial.println(sensorValue.un.gyroscope.z);
-                break;
-
-            case SH2_MAGNETIC_FIELD_CALIBRATED:
-                Serial.print("MAG: ");
-                Serial.print(sensorValue.un.magneticField.x);
-                Serial.print(", ");
-                Serial.print(sensorValue.un.magneticField.y);
-                Serial.print(", ");
-                Serial.println(sensorValue.un.magneticField.z);
-                break;
-
-            case SH2_ROTATION_VECTOR:
-                Serial.print("QUAT: ");
-                Serial.print(sensorValue.un.rotationVector.real);
-                Serial.print(", ");
-                Serial.print(sensorValue.un.rotationVector.i);
-                Serial.print(", ");
-                Serial.print(sensorValue.un.rotationVector.j);
-                Serial.print(", ");
-                Serial.println(sensorValue.un.rotationVector.k);
-                break;
-        }
-    }
-  delay(1000);
+    delay(50);
+}
