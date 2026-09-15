@@ -33,6 +33,12 @@ void setup() {
     dps.configureTemperature(DPS310_64HZ, DPS310_64SAMPLES);
 
     Serial.println("Sensors ready.");
+
+    for (int i = 0; i < 3; i++) {
+        readBNO08x();
+        readDPS310();
+        calculateAverages();
+    }
 }
 
 
@@ -51,11 +57,6 @@ void loop() {
     // accelX/Y/Z, gyroX/Y/Z, magX/Y/Z, quatReal/I/J/K, pressure_hPa, temperature_C
     // as well as their averaged counterparts
 
-    for (int i = 0; i < 3; i++) {
-        readBNO08x();
-        readDPS310();
-        calculateAverages();
-    }
     readBNO08x();
     readDPS310();
     calculateAverages();
