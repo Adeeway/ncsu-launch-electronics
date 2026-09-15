@@ -34,11 +34,7 @@ void setup() {
 
     Serial.println("Sensors ready.");
 
-    for (int i = 0; i < 3; i++) {
-        readBNO08x();
-        readDPS310();
-        calculateAverages();
-    }
+    lastTime = millis();
 }
 
 
@@ -52,18 +48,36 @@ void writeSD() {
 }
 
 
+
+
 void loop() {
     // Available Variables:
     // accelX/Y/Z, gyroX/Y/Z, magX/Y/Z, quatReal/I/J/K, pressure_hPa, temperature_C
     // as well as their averaged counterparts
 
+    for (int i = 0; i < 3; i++) {
+        readBNO08x();
+        readDPS310();
+        calculateAverages();
+    }
     readBNO08x();
     readDPS310();
     calculateAverages();
 
+    
+
+
+
+
 
     figureOutState();
     writeSD();
+
+
+
+    currentTime = millis();
+    deltaTime = (currentTime - lastTime); 
+    lastTime = currentTime;
 
 
     delay(50);

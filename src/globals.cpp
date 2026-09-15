@@ -23,6 +23,10 @@ float quatReal_avg, quatI_avg, quatJ_avg, quatK_avg;
 float pressure_hPa_avg;
 float temperature_C_avg;
 
+float velocityZ
 
+unsigned long currentTime = 0;
+unsigned long lastTime = 0;
+float deltaTime = 0.0f;
 
 
