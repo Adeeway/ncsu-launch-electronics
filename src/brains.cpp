@@ -25,33 +25,36 @@ void figureOutState(){
     Safe: A post-flight or error state where charges are disabled so recovery crews can handle the rocket safely.
     */
     
-    if (/* Power is on, systems are idle, rocket is on pad */) {
+
+    
+    /*
+    if (Power is on, systems are idle, rocket is on pad) {
     state = STATE_STANDBY;
     }
-
-
-    if (accelZ_avg >= 20 && calculateVelocityZ) {
+    */
+    
+    if (accelZ_avg >= 20 && velocityZ>1) {
         state = STATE_BOOST;
     }
 
-    if (/* Motor burnout: acceleration returns near 0 AND vertical velocity is still positive */) {
+    if (accelZ_avg < 1 && velocityZ>0) {
         state = STATE_COAST;
     }
 
-    if (/* Vertical velocity reaches approximately 0 at the top of the flight */) {
+    if (velocityZ <= 1 && velocityZ >= -1) {
         state = STATE_APOGEE;
     }
 
-    if (/* Parachute deployed AND vertical velocity is negative */) {
-        state = STATE_RECOVERY;
+    if (velocityZ < -1) {
+        state = STATE_DESCENT;
     }
 
-    if (/* Rocket has essentially zero velocity AND zero acceleration/movement */) {
-        state = STATE_TOUCHDOWN;
+    if (accelZ_avg < 1 && velocityZ < 1) {
+        state = STATE_LANDED;
     }   
 
 }
 
 void calculateVelocityZ(){
-    velocityZ += accelZ_avg * deltaTime
+    velocityZ += accelZ_avg * deltaTime;
 }

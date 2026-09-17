@@ -9,7 +9,7 @@
 #define BNO08X_INT   2
 
 #define STATE_STANDBY 0
-#define STATE_BURN 1
+#define STATE_BOOST 1
 #define STATE_COAST 2
 #define STATE_APOGEE 3
 #define STATE_DESCENT 4
@@ -35,3 +35,10 @@ extern float magX_avg, magY_avg, magZ_avg;
 extern float quatReal_avg, quatI_avg, quatJ_avg, quatK_avg;
 extern float pressure_hPa_avg;
 extern float temperature_C_avg;
+
+
+extern float velocityZ;
+
+extern unsigned long currentTime;
+extern unsigned long lastTime;
+extern float deltaTime;
