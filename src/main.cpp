@@ -1,7 +1,9 @@
 #include "globals.hpp"
 #include "brains.hpp"
 #include "sensors.hpp"
-
+#include <SPI.h>
+#include <SD.h>
+int lastWrite = 50;
 
 
 void setup() {
@@ -40,11 +42,17 @@ void setup() {
 
 
 void writeSD() {
-    // TODO: write data into SD card
-    // I actually don't want this to be happening super fast, maybe a rate of
-    //  20Hz to 50Hz would be good
-    // This function will require some knowledge about buffering and flushing
-    // in SD cards, so start researching!
+    if (lastWrite >= 50) {
+        File dataFile = SD.open("data.txt", FILE_WRITE);
+
+        if (dataFile) {
+            dataFile.println("Hello, SD card!");
+            dataFile.close();
+            lastWrite = 0;
+    }
+    }else{
+        lastWrite+= millis();
+    }
 }
 
 

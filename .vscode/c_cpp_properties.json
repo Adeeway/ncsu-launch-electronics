@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/include",
                 "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/src",
+                "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/SD/src",
                 "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit BNO08x/src",
                 "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit DPS310",
                 "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit Unified Sensor",
@@ -66,6 +67,7 @@
                 "path": [
                     "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/include",
                     "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/src",
+                    "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/SD/src",
                     "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit BNO08x/src",
                     "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit DPS310",
                     "C:/Users/adewa/Desktop/HPRC/InterestLaunch/ncsu-launch-electronics/.pio/libdeps/nano33ble/Adafruit Unified Sensor",
