@@ -1,5 +1,6 @@
 #include "brains.hpp"
-
+int conditionCounter = 0;
+int lastConditionCheck = 0;
 // Temporary event value used by the flight-state logic.
 
 
@@ -35,28 +36,47 @@ void figureOutState(){
     }
     */
     
-    if (accelZ_avg >= 20 && velocityZ>1) {
-        state = STATE_BOOST;
+    if (state == STATE_STANDBY) {
+        if (accelZ_avg >= 20 && velocityZ>1) {
+            state = STATE_BOOST;
+        }
     }
 
-    if (accelZ_avg < 1 && velocityZ>0) {
-        state = STATE_COAST;
+    if (state == STATE_BOOST) {
+        if (accelZ_avg < 1 && velocityZ>0) {
+            state = STATE_COAST;
+        }
     }
 
-    if (velocityZ <= 1 && velocityZ >= -1) {
-        state = STATE_APOGEE;
+    if (state == STATE_COAST) {
+        if (velocityZ <= 1 && velocityZ >= -1) {
+            state = STATE_APOGEE;
+        }
     }
 
-    if (velocityZ < -1) {
-        state = STATE_DESCENT;
+    if (state == STATE_APOGEE) {
+        if (velocityZ < -1) {
+            state = STATE_DESCENT;
+        }
     }
 
-    if (accelZ_avg < 1 && velocityZ < 1) {
-        state = STATE_LANDED;
-    }   
+    if (state == STATE_DESCENT) {
+        if (accelZ_avg < 1 && velocityZ < 1) {
+            state = STATE_LANDED;
+        }
+    }
 
 }
 
 void calculateVelocityZ(){
     velocityZ += accelZ_avg * deltaTime;
+}
+
+void countConditions(){
+    if(lastConditionCheck >= 50){
+        lastConditionCheck = 0;
+        conditionCounter++;
+    } else {
+        lastConditionCheck += millis();
+    }
 }
