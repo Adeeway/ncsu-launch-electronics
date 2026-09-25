@@ -1,7 +1,5 @@
 #include "brains.hpp"
 int conditionCounter = 0;
-int lastConditionCheck = 0;
-// Temporary event value used by the flight-state logic.
 
 
 
@@ -18,7 +16,7 @@ void calculateAverages(){
 }
 
 void figureOutState(){
-
+    calculateVelocityZ();
     /*
     Standby: Power is on, systems are idle, and the rocket sits on the pad waiting for final arming.
     Boost (Launch): The motor ignites and the rocket accelerates upward off the pad, detected by high G-force and positive velocity.
@@ -38,31 +36,63 @@ void figureOutState(){
     
     if (state == STATE_STANDBY) {
         if (accelZ_avg >= 20 && velocityZ>1) {
-            state = STATE_BOOST;
+            conditionCounter++;
+            if (conditionCounter >= 3){
+                state = STATE_BOOST;
+                conditionCounter = 0;
+            }
+        } else {
+            conditionCounter = 0;
         }
     }
 
     if (state == STATE_BOOST) {
         if (accelZ_avg < 1 && velocityZ>0) {
-            state = STATE_COAST;
+            conditionCounter++;
+            if(conditionCounter >= 3){
+                state = STATE_COAST;
+                conditionCounter = 0;
+            } else {
+                conditionCounter = 0;
+            }
         }
     }
 
     if (state == STATE_COAST) {
         if (velocityZ <= 1 && velocityZ >= -1) {
-            state = STATE_APOGEE;
+            conditionCounter++;
+            if(conditionCounter >= 3){
+                state = STATE_APOGEE;
+                conditionCounter = 0;
+            } else {
+                conditionCounter = 0;
+            }
+            
         }
     }
 
     if (state == STATE_APOGEE) {
         if (velocityZ < -1) {
-            state = STATE_DESCENT;
+            conditionCounter++;
+            if(conditionCounter >= 3 ){
+                state = STATE_DESCENT;
+                conditionCounter = 0;
+            } else {
+                conditionCounter = 0;
+            }
         }
     }
 
     if (state == STATE_DESCENT) {
         if (accelZ_avg < 1 && velocityZ < 1) {
-            state = STATE_LANDED;
+            conditionCounter++;
+            if(conditionCounter >= 3){
+                state = STATE_LANDED;
+                conditionCounter = 0;
+            }else{
+                conditionCounter = 0;
+            }
+            
         }
     }
 
@@ -70,13 +100,4 @@ void figureOutState(){
 
 void calculateVelocityZ(){
     velocityZ += accelZ_avg * deltaTime;
-}
-
-void countConditions(){
-    if(lastConditionCheck >= 50){
-        lastConditionCheck = 0;
-        conditionCounter++;
-    } else {
-        lastConditionCheck += millis();
-    }
 }
